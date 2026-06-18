@@ -39,14 +39,13 @@ Moves a file to a new destination or renames it within the file system index.
 
 ## Example Outputs
 
-
+#------------------------
 # 1. pwd 
 
 $ ./custom_pwd
 /home/developer/projects/unix_utilities
 
-
-
+#------------------------
 # 2. echo 
 
 $ ./custom_echo Hello World!
@@ -55,8 +54,7 @@ Hello World!
 $ ./custom_echo
 # Prints a blank newline
 
-
-
+#------------------------
 # 3. cp 
 
 # Basic usage (Successful copy returns silently with a 0 exit code)
@@ -66,8 +64,8 @@ $ ./custom_cp source.txt destination.txt
 $ ./custom_cp
  ./custom_cp source_file destination_file
 
-
-# 4. mv Output Example
+#------------------------
+# 4. mv 
 
 # Renaming a file in the same directory (Successful move returns silently)
 $ ./custom_mv old_name.txt new_name.txt
