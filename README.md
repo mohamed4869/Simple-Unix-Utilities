@@ -34,3 +34,48 @@ Creates a byte-for-byte duplicate of a file to a specified destination.
 Moves a file to a new destination or renames it within the file system index.
 * **Core API:** `rename()`
 * **Efficiency:** Updates the file system index pointer rather than moving raw data, allowing instant execution regardless of file size.
+
+---
+
+## Example Outputs
+
+# ==========================================================
+# 1. pwd Output Example
+# ==========================================================
+$ ./custom_pwd
+/home/developer/projects/unix_utilities
+
+
+# ==========================================================
+# 2. echo Output Example
+# ==========================================================
+$ ./custom_echo Hello World!
+Hello World!
+
+$ ./custom_echo
+# Prints a blank newline
+
+
+# ==========================================================
+# 3. cp Output Example
+# ==========================================================
+# Basic usage (Successful copy returns silently with a 0 exit code)
+$ ./custom_cp source.txt destination.txt
+
+# Triggering an error (e.g., missing arguments)
+$ ./custom_cp
+ ./custom_cp source_file destination_file
+
+
+# ==========================================================
+# 4. mv Output Example
+# ==========================================================
+# Renaming a file in the same directory (Successful move returns silently)
+$ ./custom_mv old_name.txt new_name.txt
+
+# Moving a file to a different directory
+$ ./custom_mv file.txt /tmp/file.txt
+
+# Triggering an error (e.g., source file does not exist)
+$ ./custom_mv missing.txt /tmp/missing.txt
+could not move the file
