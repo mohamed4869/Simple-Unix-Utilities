@@ -34,6 +34,3 @@ Creates a byte-for-byte duplicate of a file to a specified destination.
 Moves a file to a new destination or renames it within the file system index.
 * **Core API:** `rename()`
 * **Efficiency:** Updates the file system index pointer rather than moving raw data, allowing instant execution regardless of file size.
-
-# Compile mv
-gcc -Wall mv.c -o custom_mv
