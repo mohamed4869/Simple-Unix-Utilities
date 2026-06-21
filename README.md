@@ -1,78 +1,104 @@
-# Simple-Unix-Utilities
+# Simple Unix Utilities
 
-A collection of lightweight, low-level implementations of classic Unix command-line utilities (`pwd`, `echo`, `cp`, `mv`). Written entirely in C, this project demonstrates direct interaction with POSIX system calls, explicit memory management, and rigorous, system-level error handling.
+# Unix Commands Implementation
 
-## ⚙️ Repository Overview
-
-This project bypasses high-level standard library wrappers to interact directly with the operating system kernel. 
-
-**Key Technical Highlights:**
-* **System Calls:** Direct utilization of POSIX APIs (`getcwd`, `open`, `read`, `write`, `rename`) via `<unistd.h>` and `<fcntl.h>`.
-* **Memory Management:** Safe, stack-based buffer allocations (chunking 4096 bytes at a time) to ensure memory stability even when processing massive files.
-* **Strict Error Handling:** Implements rigorous validation on all system operations (including standard I/O writes) utilizing custom negative exit codes to pinpoint exact points of failure.
-* **Modular Design:** Functions are encapsulated (e.g., `pwd_main` instead of standard `main`) to allow seamless integration into automated testing environments, custom shells, or larger control systems.
+Custom implementations of core Unix commands written in C using low-level system calls. Each command mirrors the behavior of its standard Unix counterpart, built from scratch without relying on standard library wrappers.
 
 ---
 
-## 🛠️ Utilities Included
+## Commands Overview
 
-### 1. `pwd` (Print Working Directory)
-Retrieves the absolute path of the current working directory from the OS.
-* **Core API:** `getcwd()`
-* **Safety:** Allocates a strict `PATH_MAX` equivalent buffer (4096 bytes) to prevent overflow.
-
-### 2. `echo` (Echo Output)
-Parses command-line arguments and prints them sequentially to standard output.
-* **Core Logic:** Iterates through the `argv` array, explicitly verifying every `printf` write operation.
-
-### 3. `cp` (Copy File)
-Creates a byte-for-byte duplicate of a file to a specified destination.
-* **Core API:** `open()`, `read()`, `write()`
-* **Logic:** Uses bitwise flags (`O_WRONLY | O_CREAT | O_TRUNC`) to properly generate or overwrite destination files while managing correct file permissions (`0666`).
-
-### 4. `mv` (Move/Rename File)
-Moves a file to a new destination or renames it within the file system index.
-* **Core API:** `rename()`
-* **Efficiency:** Updates the file system index pointer rather than moving raw data, allowing instant execution regardless of file size.
+| File | Command | Description |
+|------|---------|-------------|
+| `echo.c` | `echo` | Prints arguments to stdout, space-separated |
+| `pwd.c` | `pwd` | Prints the current working directory |
+| `cp.c` | `cp` | Copies a file from source to destination |
+| `mv.c` | `mv` | Moves (renames) a file to a new path |
 
 ---
 
-## Example Outputs
+## Compilation
 
+Each file contains a named entry-point (e.g. `cp_main`) intended to be called from a course-provided `main.c`. To compile and test standalone, wrap it with a minimal `main`:
 
-# 1. pwd 
+```c
+// main.c
+int cp_main(int argc, char *argv[]);
+int main(int argc, char *argv[]) {
+    return cp_main(argc, argv);
+}
+```
 
-$ ./custom_pwd
-/home/developer/projects/unix_utilities
+Then compile with:
 
+```bash
+# echo
+gcc main.c echo.c -o my_echo
 
-# 2. echo 
+# pwd
+gcc main.c pwd.c -o my_pwd
 
-$ ./custom_echo Hello World!
-Hello World!
+# cp
+gcc main.c cp.c -o my_cp
 
-$ ./custom_echo
-# Prints a blank newline
+# mv
+gcc main.c mv.c -o my_mv
+```
 
+---
 
-# 3. cp 
+## Example Output
 
-# Basic usage (Successful copy returns silently with a 0 exit code)
-$ ./custom_cp source.txt destination.txt
+### echo
+```bash
+$ ./my_echo Hello World
+Hello World
 
-# Triggering an error (e.g., missing arguments)
-$ ./custom_cp
- ./custom_cp source_file destination_file
+$ ./my_echo one two three
+one two three
+```
 
+### pwd
+```bash
+$ ./my_pwd
+/home/user/projects
+```
 
-# 4. mv 
+### cp
+```bash
+$ ./my_cp source.txt destination.txt
+# destination.txt now contains a copy of source.txt
 
-# Renaming a file in the same directory (Successful move returns silently)
-$ ./custom_mv old_name.txt new_name.txt
+$ ./my_cp missing.txt dest.txt
+could not open source file
+```
 
-# Moving a file to a different directory
-$ ./custom_mv file.txt /tmp/file.txt
+### mv
+```bash
+$ ./my_mv old_name.txt new_name.txt
+# file has been renamed/moved
 
-# Triggering an error (e.g., source file does not exist)
-$ ./custom_mv missing.txt /tmp/missing.txt
+$ ./my_mv missing.txt dest.txt
 could not move the file
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── echo.c   # Print arguments to stdout
+├── pwd.c    # Print current working directory
+├── cp.c     # Copy file using read/write syscalls
+└── mv.c     # Move/rename file using rename syscall
+```
+
+---
+
+## Key Concepts Covered
+
+- **File I/O** — `open()`, `read()`, `write()`, `close()` with flags like `O_RDONLY`, `O_CREAT`, `O_TRUNC`
+- **Directory API** — `getcwd()` to retrieve the working directory path
+- **File management** — `rename()` for atomic move/rename across paths
+- **Error handling** — exit codes and descriptive messages for each failure path
